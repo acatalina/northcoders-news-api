@@ -13,7 +13,7 @@ function voteArticle (req, res, next) {
 
     res.status(204).send({STATUS: document});
   });
-};
+}
 
 function voteComment (req, res, next) {
   let vote = getVote(req.query) || next('error');
@@ -28,7 +28,7 @@ function voteComment (req, res, next) {
 
     res.status(204).send({STATUS: document});
   });
-};
+}
 
 function getVote (query) {
   let vote;

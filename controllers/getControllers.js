@@ -59,9 +59,9 @@ function getArticleComments (req, res, next) {
 function getUser (req, res, next) {
   Users.find({username: req.params.username}, function (error, user) {
     if (error) {
-      return next(error)
+      return next(error);
     }
-    res.status(200).send({user: user})
+    res.status(200).send({user: user});
   });
 }
 
@@ -70,4 +70,4 @@ module.exports = {
   getArticles,
   getArticleComments,
   getUser
-}
+};

@@ -2,7 +2,6 @@ if (!process.env.NODE_ENV) process.env.NODE_ENV = 'dev';
 
 var express = require('express');
 var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
 var app = express();
 var config = require('./config');
 var db = config.DB[process.env.NODE_ENV] || process.env.DB;
@@ -17,21 +16,19 @@ mongoose.connect(db, function (err) {
   }
 });
 
-app.use(bodyParser.json());
-
-app.use(function(req, res, next) {
-  console.log('Got a request!');
-  next();
-});
-
 app.use('/api', apiRouter);
+
+app.use('/*', function (req, res) {
+  res.status(404).send({reason: 'Not found'});
+});
 
 app.listen(PORT, function () {
   console.log(`listening on port ${PORT}`);
 });
 
-app.use('/*', function(error, req, res, next) {
+app.use('/*', function (error, req, res, next) {
   if (error) {
     res.status(500).send({error: error});
   }
+  
 });

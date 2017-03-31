@@ -8,8 +8,8 @@ function deleteComment (req, res, next) {
 
     res.status(204).send();
   });
-};
-
+}
+// This is a comment;
 module.exports = {
   deleteComment
-}
+};
