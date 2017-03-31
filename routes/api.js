@@ -4,17 +4,14 @@ const getControllers = require('../controllers/getControllers');
 const postComment = require('../controllers/postControllers');
 const putControllers = require('../controllers/putControllers');
 const deleteControllers = require('../controllers/deleteControllers');
-const countComments = require('../countComments');
 
 router.route('/').get(function (request, response) {
   response.status(200).send({status: 'OK'});
 });
 
-router.route('/test').get(countComments);
-
 router.route('/topics').get(getControllers.getTopic);
 
-router.route('/topics/:topic_id/articles').get(getControllers.getTopicArticles);
+router.route('/topics/:topic_id/articles').get(getControllers.getArticles);
 
 router.route('/articles').get(getControllers.getArticles);
 
