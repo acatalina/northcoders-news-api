@@ -40,9 +40,19 @@ function getArticleComments (req, res, next) {
   });
 };
 
+function getUser (req, res, next) {
+  Users.find({username: req.params.username}, function (error, user) {
+    if (error) {
+      return next(error)
+    }
+    res.status(200).send({user: user})
+  });
+}
+
 module.exports = {
   getTopic,
   getTopicArticles,
   getArticles,
-  getArticleComments
+  getArticleComments,
+  getUser
 }
