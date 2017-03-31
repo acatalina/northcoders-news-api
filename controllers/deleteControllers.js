@@ -1,7 +1,7 @@
-const {Users, Articles, Comments, Topics} = require('../models/models');
+const {Comments} = require('../models/models');
 
 function deleteComment (req, res, next) {
-  Comments.remove({_id: req.params._id}, function (error, document) {
+  Comments.remove({_id: req.params._id}, function (error) {
     if (error) {
       next(error);
     }
@@ -9,7 +9,7 @@ function deleteComment (req, res, next) {
     res.status(204).send();
   });
 }
-// This is a comment;
+
 module.exports = {
   deleteComment
 };

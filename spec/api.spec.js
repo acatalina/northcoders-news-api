@@ -16,6 +16,9 @@ before(done => {
   mongoose.connection.once('connected', () => {
     mongoose.connection.db.dropDatabase(() => {
       console.log('Dropped database');
+      // FIXME: Need to bring the ids from test.seed. Pass through seed() an function
+        // that takes ids and done and call done at the end of that function.
+      }
       seed(done);
     });
   });

@@ -8,7 +8,7 @@ function voteArticle (req, res, next) {
     {$inc: {votes: vote}},
     function (error, document) {
     if (error) {
-      res.status(500).send({error: error});
+      next(error);
     }
 
     res.status(204).send({STATUS: document});
@@ -16,14 +16,14 @@ function voteArticle (req, res, next) {
 }
 
 function voteComment (req, res, next) {
-  let vote = getVote(req.query) || next('error');
+  let vote = getVote(req.query);
   
   Comments.update(
     {_id: req.params._id},
     {$inc: {votes: vote}},
     function (error, document) {
     if (error) {
-      res.status(500).send({error: error});
+      next(error);
     }
 
     res.status(204).send({STATUS: document});

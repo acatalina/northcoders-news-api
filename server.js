@@ -7,6 +7,7 @@ var config = require('./config');
 var db = config.DB[process.env.NODE_ENV] || process.env.DB;
 var PORT = config.PORT[process.env.NODE_ENV] || process.env.PORT;
 const apiRouter = require('./routes/api');
+const errorHandler = require('./controllers/errorHandler');
 
 mongoose.connect(db, function (err) {
   if (!err) {
@@ -26,9 +27,9 @@ app.listen(PORT, function () {
   console.log(`listening on port ${PORT}`);
 });
 
-app.use('/*', function (error, req, res, next) {
+app.use(function (error, req, res, next) {
   if (error) {
-    res.status(500).send({error: error});
+    let err = errorHandler(error);
+    res.status(err.statusCode).send(err.message);
   }
-  
 });
