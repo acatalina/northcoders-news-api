@@ -27,9 +27,9 @@ app.listen(PORT, function () {
   console.log(`listening on port ${PORT}`);
 });
 
-app.use(function (error, req, res, next) {
+app.use(function (error, req, res) {
   if (error) {
     let err = errorHandler(error);
-    res.status(err.statusCode).send(err.message);
+    return res.status(err.statusCode).send(err.message);
   }
 });

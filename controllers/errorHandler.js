@@ -3,7 +3,7 @@ const errorHandler = ((error) => {
   let errorValue = error.errors.belongs_to.value;
   let statusCode;
   let message;
-
+  
   switch (errorName) {
     case 'CastError':
       statusCode = 404;
