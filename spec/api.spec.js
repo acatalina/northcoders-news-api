@@ -20,14 +20,9 @@ describe('API ROUTES', () => {
 
         saveTestData((idObj) => {
           sampleIds = idObj;
-          // also save some invalid IDs to test for errors
-          // explain the difference between an invalid/incorrect ID
-          invalidId = sampleIds.article_id.toString().split('');
-          invalidId[invalidId.length - 1] =  '5345';
-          invalidId = invalidId.join('');
-          // take an ID from another database
+          invalidId = `${sampleIds.article_id.toString()}5345`;
           incorrectId = '5841a06fed9db244975922c3';
-          done();  
+          done();
         });
       });
     });
@@ -236,8 +231,140 @@ describe('API ROUTES', () => {
   });
 
   describe('PUT /api/articles/:article_id', () => {
-    it('returns status code 204 for valid inputs', () => {
+    it('returns status code 201 for valid inputs', (done) => {
+      request(ROOT)
+        .put(`/articles/${sampleIds.article_id}?vote=up`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(201);
+          expect(res.body.article.votes).to.equal(0);
+          done();
+        });
+    });
+
+    it('returns the article with the votes incremented by one', (done) => {
+      request(ROOT)
+        .put(`/articles/${sampleIds.article_id}?vote=up`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(201);
+          expect(res.body.article.votes).to.equal(1);
+          done();
+        });
+    });
+  
+    xit('returns the article with the votes decremented by one', (done) => {
+      request(ROOT)
+        .put(`/articles/${sampleIds.article_id}?vote=down`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(201);
+          expect(res.body.article.votes).to.equal(0);
+          done();
+        });
+    });
       
+    it('handles invalid queries', (done) => {
+      request(ROOT)
+        .put(`/articles/${sampleIds.article_id}?vote=nonsense`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(400);
+          expect(res.body).to.eql({reason: 'Invalid query'});
+          done();
+        });
+    });
+  });
+
+  describe('PUT /api/comments/:comment_id', () => {
+    it('returns status code 201 for valid inputs', (done) => {
+      request(ROOT)
+        .put(`/comments/${sampleIds.comment_id}?vote=up`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(201);
+          expect(res.body.comment.votes).to.equal(0);
+          done();
+        });
+    });
+
+    it('returns the article with the votes incremented by one', (done) => {
+      request(ROOT)
+        .put(`/comments/${sampleIds.comment_id}?vote=up`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(201);
+          expect(res.body.comment.votes).to.equal(1);
+          done();
+        });
+    });
+  
+    xit('returns the article with the votes decremented by one', (done) => {
+      request(ROOT)
+        .put(`/comments/${sampleIds.comment_id}?vote=down`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(201);
+          expect(res.body.comment.votes).to.equal(0);
+          done();
+        });
+    });
+      
+    it('handles invalid queries', (done) => {
+      request(ROOT)
+        .put(`/comments/${sampleIds.comment_id}?vote=nonsense`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(400);
+          expect(res.body).to.eql({reason: 'Invalid query'});
+          done();
+        });
+    });
+  });
+
+  describe('DELETE /api/comments/:comment_id', () => {
+    it('returns status code 204 for valid inputs', (done) => {
+      request(ROOT)
+        .delete(`/comments/${sampleIds.comment_id}`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(204);
+          done();
+        });
+    });
+
+    it('deletes the comment requested', (done) => {
+      request(ROOT)
+        .delete(`/comments/${sampleIds.comment_id}`)
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(404);
+          expect(res.body).to.eql({reason: 'Not found'});
+          done();
+        });
+    });
+  });
+
+  describe('GET /api/users/:username', () => {
+    it('returns status code 200 for found users', (done) => {
+      request(ROOT)
+        .get('/users/northcoder')
+        .end((error, res) => {
+          expect(res.status).to.equal(200);
+          done();
+        });
+    });
+
+    it('returns the user requested', (done) => {
+      request(ROOT)
+        .get('/users/northcoder')
+        .end((error, res) => {
+          let user = res.body.user;
+          expect(user._id).to.be.a('string');
+          expect(user.username).to.be.a('string');
+          expect(user.name).to.be.a('string');
+          expect(user.avatar_url).to.be.a('string');
+          done();
+        });
+    });
+
+    it('handles not found users', (done) => {
+      request(ROOT)
+        .get('/users/test')
+        .end((error, res) => {
+          expect(res.status).to.equal(404);
+          done();
+        });
     });
   });
 
@@ -250,6 +377,42 @@ describe('API ROUTES', () => {
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
           expect(res.body.comment.body).to.eql('test');
+          done();
+        });
+    });
+
+    it('handles invalid inputs', (done) => {
+      request(ROOT)
+        .post(`/articles/${sampleIds.article_id}/comments`)
+        .send({'nonsense': 'test'})
+        .set('Accept', 'application/json')
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(400);
+          expect(res.body).to.eql({reason: 'Path `body` is required.'});
+          done();
+        });
+    });
+
+    it('handles invalid ids', (done) => {
+      request(ROOT)
+        .post(`/articles/${invalidId}/comments`)
+        .send({'body': 'test'})
+        .set('Accept', 'application/json')
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(400);
+          expect(res.body).to.eql({reason: 'Invalid id'});
+          done();
+        });
+    });
+
+    it('handles incorrect ids', (done) => {
+      request(ROOT)
+        .post(`/articles/${incorrectId}/comments`)
+        .send({'body': 'test'})
+        .set('Accept', 'application/json')
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(404);
+          expect(res.body).to.eql({reason: 'Not found'});
           done();
         });
     });

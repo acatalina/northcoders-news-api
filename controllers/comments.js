@@ -1,5 +1,6 @@
-const {Comments} = require('../models/models');
-const {getVote, validateId} = require('./helpers/helpers');
+const {Comments, Articles} = require('../models/models');
+const {validateVote, validateId} = require('./helpers/helpers');
+const async = require('async');
 
 function getArticleComments (req, res, next) {
   let _id = req.params.article_id;
@@ -14,34 +15,68 @@ function getArticleComments (req, res, next) {
     if (!comments.length) {
       return res.status(204).send({});
     }
+    
     return res.status(200).send({comments: comments});
   });
 }
 
 function voteComment (req, res, next) {
-  let vote = getVote(req.query);
+  let vote = validateVote(res, req.query);
   
   Comments.findOneAndUpdate(
     {_id: req.params._id},
     {$inc: {votes: vote}},
-    function (error) {
-      return error ? next(error) : res.status(204).send();
+    function (error, comment) {
+      if (error) {
+        return next(error);
+      } else if (!comment) {
+        return res.status(404).send({reason: 'Not found'});
+      }
+
+      return res.status(201).send({comment: comment});
   });
 }
 
-function postComment (req, res, next) {  
+function postComment (req, res, next) {
+  let _id = validateId(res, req.params.article_id);
+
   let newComment = new Comments({
-    belongs_to: req.params.article_id,
+    belongs_to: _id,
     body: req.body.body
   });
-  newComment.save(function (error, comment) {
-    return error ? next(error) : res.status(201).send({comment: comment});
-  });
+
+  async.waterfall([
+      function (next) {
+        Articles.findById (_id, function (error, article) {
+          if (error) {
+            return next(error);
+          } else if (!article) {
+            return res.status(404).send({reason: 'Not found'});
+          }
+
+          return next(null, article);
+        });
+      },
+      function (article, done) {
+        newComment.save(function (error, comment) {
+          return error ? done(error) : done(null, comment);
+        });
+      }], 
+      function (error, comment) {
+        return error ? next(error) : res.status(201).send({comment: comment});
+      }
+    );
 }
 
 function deleteComment (req, res, next) {
-  Comments.remove({_id: req.params._id}, function (error) {
-    return error ? next(error) : res.status(204).send();
+  Comments.findOneAndRemove({_id: req.params._id}, function (error, comment) {
+    if (error) {
+      return next(error);
+    } else if (!comment) {
+      return res.status(404).send({reason: 'Not found'});
+    }
+    
+    return res.status(204).send();
   });
 }
 

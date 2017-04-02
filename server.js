@@ -7,7 +7,6 @@ var config = require('./config');
 var db = config.DB[process.env.NODE_ENV] || process.env.DB;
 var PORT = config.PORT[process.env.NODE_ENV] || process.env.PORT;
 const apiRouter = require('./routes/api');
-const errorHandler = require('./controllers/errorHandler');
 
 mongoose.connect(db, function (err) {
   if (!err) {
@@ -27,9 +26,27 @@ app.listen(PORT, function () {
   console.log(`listening on port ${PORT}`);
 });
 
-app.use(function (error, req, res) {
+app.use(function (error, req, res, next) {
   if (error) {
-    let err = errorHandler(error);
-    return res.status(err.statusCode).send(err.message);
+    let statusCode;
+    let message;
+
+    switch (error.name) {
+      case 'CastError':
+        statusCode = 404;
+        message = {reason: 'Not found'};
+        break;
+      case 'ValidationError':
+        statusCode = 400;
+        message = {reason: error.errors.body.message};
+        break;
+      default:
+        statusCode = 500;
+        message = {error: error};
+    }
+
+    return res.status(statusCode).send(message);
   }
+  
+  next();
 });

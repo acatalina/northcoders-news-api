@@ -4,7 +4,13 @@ function getUser (req, res, next) {
   let query = {username: req.params.username};
 
   Users.findOne(query, function (error, user) {
-    return error ? next(error) : res.status(200).send({user: user});
+    if (error) {
+      return next(error);
+    } else if (!user) {
+      return res.status(404).send({reason: 'Not found'});
+    }
+    
+    return res.status(200).send({user: user});
   });
 }
 

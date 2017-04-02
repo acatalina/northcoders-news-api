@@ -1,23 +1,22 @@
-function getVote (query) {
-  let vote;
-
-  if (query.vote === 'up') {
-    vote = 1;
-  } else if (query.vote === 'down') {
-    vote = -1;
+function validateVote (res, query) {
+  switch (query.vote) {
+    case 'up':
+      return 1;
+    case 'down':
+      return -1;
+    default: 
+      return res.status(400).send({reason: 'Invalid query'});
   }
-
-  return vote;
 }
 
 function validateId (res, id) {
   if (id.length !== 24) {
     return res.status(400).send({reason: 'Invalid id'});
-  } 
-  return;
+  }
+  return id;
 }
 
 module.exports = {
-  getVote,
+  validateVote,
   validateId
 };

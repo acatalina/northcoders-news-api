@@ -1,6 +1,6 @@
 const {Articles, Comments} = require('../models/models');
 const async = require('async');
-const {getVote} = require('./helpers/helpers');
+const {validateVote, validateId} = require('./helpers/helpers');
 
 function getArticles (req, res, next) {
   let _id = req.params.topic_id;
@@ -40,14 +40,14 @@ function getArticles (req, res, next) {
 }
 
 function voteArticle (req, res, next) {
-  let vote = getVote(req.query);
+  let _id = validateId(res, req.params._id);
+  let vote = validateVote(res, req.query);
 
-  Articles.update(
-    {_id: req.params._id},
+  Articles.findByIdAndUpdate(
+    {_id: _id},
     {$inc: {votes: vote}},
-    function (error, document) {
-
-    return error ? next(error) : res.status(204).send({STATUS: document});
+    function (error, article) {
+      return error ? next(error) : res.status(201).send({article: article});
   });
 }
 
