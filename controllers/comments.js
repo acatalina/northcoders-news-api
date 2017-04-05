@@ -3,10 +3,8 @@ const {validateVote, validateId} = require('./helpers/helpers');
 const async = require('async');
 
 function getArticleComments (req, res, next) {
-  let _id = req.params.article_id;
+  let _id = validateId(res, req.params.article_id);
   let query = {belongs_to: _id};
-
-  validateId(res, _id);
 
   Comments.find(query, function (error, comments) {
     if (error) {
@@ -22,9 +20,10 @@ function getArticleComments (req, res, next) {
 
 function voteComment (req, res, next) {
   let vote = validateVote(res, req.query);
-  
+  let _id = validateId(res, req.params._id);
+
   Comments.findOneAndUpdate(
-    {_id: req.params._id},
+    {_id: _id},
     {$inc: {votes: vote}},
     {new: true},
     function (error, comment) {
@@ -70,7 +69,9 @@ function postComment (req, res, next) {
 }
 
 function deleteComment (req, res, next) {
-  Comments.findOneAndRemove({_id: req.params._id}, function (error, comment) {
+  let _id = validateId(res, req.params._id);
+
+  Comments.findOneAndRemove({_id: _id}, function (error, comment) {
     if (error) {
       return next(error);
     } else if (!comment) {
