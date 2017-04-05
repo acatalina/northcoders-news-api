@@ -46,6 +46,7 @@ function voteArticle (req, res, next) {
   Articles.findByIdAndUpdate(
     {_id: _id},
     {$inc: {votes: vote}},
+    {new: true},
     function (error, article) {
       return error ? next(error) : res.status(201).send({article: article});
   });

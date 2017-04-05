@@ -8,11 +8,11 @@ var db = config.DB[process.env.NODE_ENV] || process.env.DB;
 var PORT = config.PORT[process.env.NODE_ENV] || process.env.PORT;
 const apiRouter = require('./routes/api');
 
-mongoose.connect(db, function (err) {
-  if (!err) {
+mongoose.connect(db, function (error) {
+  if (!error) {
     console.log(`connected to the Database: ${db}`);
   } else {
-    console.log(`error connecting to the Database ${err}`);
+    console.log(`error connecting to the Database ${error}`);
   }
 });
 

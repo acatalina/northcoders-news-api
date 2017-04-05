@@ -26,6 +26,7 @@ function voteComment (req, res, next) {
   Comments.findOneAndUpdate(
     {_id: req.params._id},
     {$inc: {votes: vote}},
+    {new: true},
     function (error, comment) {
       if (error) {
         return next(error);

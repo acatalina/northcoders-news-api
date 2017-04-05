@@ -236,7 +236,7 @@ describe('API ROUTES', () => {
         .put(`/articles/${sampleIds.article_id}?vote=up`)
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
-          expect(res.body.article.votes).to.equal(0);
+          expect(res.body.article.votes).to.equal(1);
           done();
         });
     });
@@ -246,17 +246,17 @@ describe('API ROUTES', () => {
         .put(`/articles/${sampleIds.article_id}?vote=up`)
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
-          expect(res.body.article.votes).to.equal(1);
+          expect(res.body.article.votes).to.equal(2);
           done();
         });
     });
   
-    xit('returns the article with the votes decremented by one', (done) => {
+    it('returns the article with the votes decremented by one', (done) => {
       request(ROOT)
         .put(`/articles/${sampleIds.article_id}?vote=down`)
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
-          expect(res.body.article.votes).to.equal(0);
+          expect(res.body.article.votes).to.equal(1);
           done();
         });
     });
@@ -278,7 +278,7 @@ describe('API ROUTES', () => {
         .put(`/comments/${sampleIds.comment_id}?vote=up`)
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
-          expect(res.body.comment.votes).to.equal(0);
+          expect(res.body.comment.votes).to.equal(1);
           done();
         });
     });
@@ -288,17 +288,17 @@ describe('API ROUTES', () => {
         .put(`/comments/${sampleIds.comment_id}?vote=up`)
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
-          expect(res.body.comment.votes).to.equal(1);
+          expect(res.body.comment.votes).to.equal(2);
           done();
         });
     });
   
-    xit('returns the article with the votes decremented by one', (done) => {
+    it('returns the article with the votes decremented by one', (done) => {
       request(ROOT)
         .put(`/comments/${sampleIds.comment_id}?vote=down`)
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
-          expect(res.body.comment.votes).to.equal(0);
+          expect(res.body.comment.votes).to.equal(1);
           done();
         });
     });
