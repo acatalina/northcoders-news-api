@@ -2,85 +2,88 @@ const {Comments, Articles} = require('../models/models');
 const {validateVote, validateId} = require('./helpers/helpers');
 const async = require('async');
 
-function getArticleComments (req, res, next) {
-  let _id = validateId(res, req.params.article_id);
+const getArticleComments = (req, res, next) => {
+  let _id = validateId(res, req.params.article_id, next);
   let query = {belongs_to: _id};
 
-  Comments.find(query, function (error, comments) {
-    if (error) {
-      return next(error);
-    }
+  Comments.find(query, (error, comments) => {
+    if (error) return next(error);
+    
     if (!comments.length) {
-      return res.status(204).send({});
+      return next({name: 'NOTHING'});
     }
     
     return res.status(200).send({comments: comments});
   });
-}
+};
 
-function voteComment (req, res, next) {
-  let vote = validateVote(res, req.query);
-  let _id = validateId(res, req.params._id);
+const voteComment = (req, res, next) => {
+  let vote = validateVote(res, req.query, next);
+  let _id = validateId(res, req.params._id, next);
 
   Comments.findOneAndUpdate(
     {_id: _id},
     {$inc: {votes: vote}},
     {new: true},
-    function (error, comment) {
-      if (error) {
-        return next(error);
-      } else if (!comment) {
-        return res.status(404).send({reason: 'Not found'});
+    (error, comment) => {
+      if (error) return next(error);
+      
+      if (!comment) {
+        return next({name: 'NOTFOUND'});
       }
-
+      
       return res.status(201).send({comment: comment});
   });
-}
+};
 
-function postComment (req, res, next) {
-  let _id = validateId(res, req.params.article_id);
+const postComment = (req, res, next) => {
+  let _id = validateId(res, req.params.article_id, next);
 
   let newComment = new Comments({
     belongs_to: _id,
     body: req.body.body
   });
 
-  async.waterfall([
-      function (next) {
-        Articles.findById (_id, function (error, article) {
-          if (error) {
-            return next(error);
-          } else if (!article) {
-            return res.status(404).send({reason: 'Not found'});
-          }
+  const findArticleById = (next) => {
+    Articles.findById (_id, (error, article) => {
+      if (error) return next(error);
+      
+      if (!article) {
+        return next({name: 'CastError'});
+      }
+      
+      return next(null, article);
+    });
+  };
 
-          return next(null, article);
-        });
-      },
-      function (article, done) {
-        newComment.save(function (error, comment) {
-          return error ? done(error) : done(null, comment);
-        });
-      }], 
-      function (error, comment) {
+  const postComment = (article, done) => {
+    newComment.save((error, comment) => {
+      return error ? done(error) : done(null, comment);
+    });
+  };
+
+  async.waterfall([
+      findArticleById,
+      postComment
+      ], (error, comment) => {
         return error ? next(error) : res.status(201).send({comment: comment});
       }
     );
-}
+};
 
-function deleteComment (req, res, next) {
-  let _id = validateId(res, req.params._id);
+const deleteComment = (req, res, next) => {
+  let _id = validateId(res, req.params._id, next);
 
-  Comments.findOneAndRemove({_id: _id}, function (error, comment) {
-    if (error) {
-      return next(error);
-    } else if (!comment) {
-      return res.status(404).send({reason: 'Not found'});
+  Comments.findOneAndRemove({_id: _id}, (error, comment) => {
+    if (error) return next(error);
+    
+    if (!comment) {
+      return next({name: 'CastError'});
     }
     
     return res.status(204).send();
   });
-}
+};
 
 module.exports = {
   getArticleComments,

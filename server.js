@@ -1,14 +1,16 @@
 if (!process.env.NODE_ENV) process.env.NODE_ENV = 'dev';
 
-var express = require('express');
-var mongoose = require('mongoose');
-var app = express();
-var config = require('./config');
-var db = config.DB[process.env.NODE_ENV] || process.env.DB;
-var PORT = config.PORT[process.env.NODE_ENV] || process.env.PORT;
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
+const config = require('./config');
 const apiRouter = require('./routes/api');
+const errorHandler = require('./error/index');
 
-mongoose.connect(db, function (error) {
+const db = config.DB[process.env.NODE_ENV] || process.env.DB;
+const PORT = config.PORT[process.env.NODE_ENV] || process.env.PORT;
+
+mongoose.connect(db, (error) => {
   if (!error) {
     console.log(`connected to the Database: ${db}`);
   } else {
@@ -18,35 +20,12 @@ mongoose.connect(db, function (error) {
 
 app.use('/api', apiRouter);
 
-app.use('/*', function (req, res) {
-  res.status(404).send({reason: 'Not found'});
+app.use('/*', (req, res, next) => {
+  return next({name: 'CastError'});
 });
 
 app.listen(PORT, function () {
   console.log(`listening on port ${PORT}`);
 });
 
-app.use(function (error, req, res, next) {
-  if (error) {
-    let statusCode;
-    let message;
-
-    switch (error.name) {
-      case 'CastError':
-        statusCode = 404;
-        message = {reason: 'Not found'};
-        break;
-      case 'ValidationError':
-        statusCode = 400;
-        message = {reason: error.errors.body.message};
-        break;
-      default:
-        statusCode = 500;
-        message = {error: error};
-    }
-
-    return res.status(statusCode).send(message);
-  }
-  
-  next();
-});
+app.use(errorHandler);

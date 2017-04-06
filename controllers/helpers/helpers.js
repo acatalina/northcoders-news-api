@@ -1,20 +1,21 @@
-function validateVote (res, query) {
+const validateVote = (res, query, next) => {
   switch (query.vote) {
     case 'up':
       return 1;
     case 'down':
       return -1;
     default: 
-      return res.status(400).send({reason: 'Invalid query'});
+      return next({name: 'QUERY'});
   }
-}
+};
 
-function validateId (res, id) {
+const validateId = (res, id, next) => {
   if (id.length !== 24) {
-    return res.status(400).send({reason: 'Invalid id'});
+    return next({name: 'ID'});
   }
+  
   return id;
-}
+};
 
 module.exports = {
   validateVote,

@@ -85,7 +85,7 @@ describe('API ROUTES', () => {
     });
   });
 
-  describe('GET /api/topics/:topic_id/articles', () => {
+  describe('GET /api/topics/:topic/articles', () => {
     it('returns status code 200 for valid inputs', (done) => {
       request(ROOT)
         .get('/topics/football/articles')

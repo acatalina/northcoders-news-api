@@ -6,13 +6,13 @@ const topics = require('../controllers/topics');
 const users = require('../controllers/users');
 var bodyParser = require('body-parser');
 
-router.route('/').get(function (request, response) {
-  response.status(200).send({status: 'OK'});
+router.route('/').get((req, res) => {
+  res.status(200).send({status: 'OK'});
 });
 
 router.route('/topics').get(topics.getTopics);
 
-router.route('/topics/:topic_id/articles').get(articles.getArticles);
+router.route('/topics/:topic/articles').get(articles.getArticles);
 
 router.route('/articles').get(articles.getArticles);
 

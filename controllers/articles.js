@@ -2,25 +2,25 @@ const {Articles, Comments} = require('../models/models');
 const async = require('async');
 const {validateVote, validateId} = require('./helpers/helpers');
 
-function getArticles (req, res, next) {
-  let _id = req.params.topic_id;
+const getArticles = (req, res, next) => {
+  let _id = req.params.topic;
   let query = _id ? {belongs_to: _id} : {};
 
   async.waterfall([
-    function (next) {
-      Articles.find(query, function (error, articles) {
+    (next) => {
+      Articles.find(query, (error, articles) => {
         if (error) {
           return next(error);
         }
         if (!articles.length) {
-          return res.status(204).send({});
+          return next({name: 'NOTHING'});
         }
         next(null, articles);
       });
     },
-    function (articles, done) {
-      async.map(articles, function (article, next) {
-        Comments.count({belongs_to: article._id}, function (error, count) {
+    (articles, done) => {
+      async.map(articles, (article, next) => {
+        Comments.count({belongs_to: article._id}, (error, count) => {
           if (error) {
             return next(error);
           }
@@ -29,28 +29,28 @@ function getArticles (req, res, next) {
           next(null, article);
         });
       }, 
-      function (error, res) {
+      (error, res) => {
         done(error, res);
       });
     }], 
-    function (error, articles) {
+    (error, articles) => {
       return error ? next(error) : res.status(200).send({articles: articles});
     }
   );
-}
+};
 
-function voteArticle (req, res, next) {
-  let _id = validateId(res, req.params._id);
-  let vote = validateVote(res, req.query);
+const voteArticle = (req, res, next) => {
+  let _id = validateId(res, req.params._id, next);
+  let vote = validateVote(res, req.query, next);
 
   Articles.findByIdAndUpdate(
     {_id: _id},
     {$inc: {votes: vote}},
     {new: true},
-    function (error, article) {
+    (error, article) => {
       return error ? next(error) : res.status(201).send({article: article});
   });
-}
+};
 
 module.exports = {
   getArticles,
