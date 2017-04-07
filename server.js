@@ -8,7 +8,7 @@ const apiRouter = require('./routes/api');
 const errorHandler = require('./error/index');
 const cors = require('cors');
 
-const db = config.DB[process.env.NODE_ENV] || process.env.DB;
+const db = config.DB['dev'] || process.env.DB;
 const PORT = process.env.PORT || config.PORT[process.env.NODE_ENV] || 3000;
 
 mongoose.connect(db, (error) => {
