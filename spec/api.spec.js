@@ -372,7 +372,7 @@ describe('API ROUTES', () => {
     it('returns the created comment and status code 201', (done) => {
       request(ROOT)
         .post(`/articles/${sampleIds.article_id}/comments`)
-        .send({'body': 'test'})
+        .send({'comment': 'test'})
         .set('Accept', 'application/json')
         .end((error, res) => {
           expect(res.statusCode).to.equal(201);
@@ -413,6 +413,35 @@ describe('API ROUTES', () => {
         .end((error, res) => {
           expect(res.statusCode).to.equal(404);
           expect(res.body).to.eql({reason: 'Not found'});
+          done();
+        });
+    });
+  });
+
+
+  describe('GET /api/users', () => {
+    it('returns status code 200', (done) => {
+      request(ROOT)
+        .get('/users')
+        .end((error, res) => {
+          expect(res.statusCode).to.equal(200);
+          done();
+        });
+    });
+
+    it('returns an array with the users', (done) => {
+      request(ROOT)
+        .get('/users')
+        .end((error, res) => {
+          expect(res.body.users.length).to.equal(1);
+          
+          res.body.users.forEach(user => {
+            expect(user._id).to.be.a('string');
+            expect(user.username).to.be.a('string');
+            expect(user.name).to.be.a('string');
+            expect(user.avatar_url).to.be.a('string');
+          });
+          
           done();
         });
     });

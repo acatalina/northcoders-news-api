@@ -24,6 +24,8 @@ router.route('/comments/:_id').put(comments.voteComment);
 
 router.route('/comments/:_id').delete(comments.deleteComment);
 
+router.route('/users').get(users.getUsers);
+
 router.route('/users/:username').get(users.getUser);
 
 router.use(bodyParser.json());

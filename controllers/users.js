@@ -14,6 +14,13 @@ const getUser = (req, res, next) => {
   });
 };
 
+const getUsers = (req, res, next) => {
+  Users.find({}, (error, users) => {
+    return error ? next(error) : res.status(200).send({users: users});
+  });
+};
+
 module.exports = {
-  getUser
+  getUser,
+  getUsers
 };
