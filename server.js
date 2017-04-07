@@ -6,6 +6,7 @@ const app = express();
 const config = require('./config');
 const apiRouter = require('./routes/api');
 const errorHandler = require('./error/index');
+const cors = require('cors');
 
 const db = config.DB[process.env.NODE_ENV] || process.env.DB;
 const PORT = config.PORT[process.env.NODE_ENV] || process.env.PORT;
@@ -17,6 +18,8 @@ mongoose.connect(db, (error) => {
     console.log(`error connecting to the Database ${error}`);
   }
 });
+
+app.use(cors());
 
 app.use('/api', apiRouter);
 

@@ -41,7 +41,7 @@ const postComment = (req, res, next) => {
 
   let newComment = new Comments({
     belongs_to: _id,
-    body: req.body.body
+    body: req.body.comment
   });
 
   const findArticleById = (next) => {
