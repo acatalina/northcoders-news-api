@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha ./spec/api.spec",
     "start": "node server.js",
-    "precommit": "npm t"
+    "precommit": "npm test"
   },
   "author": "",
   "license": "ISC",
