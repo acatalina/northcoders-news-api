@@ -5,7 +5,8 @@
   "main": "config.js",
   "scripts": {
     "test": "mocha ./spec/api.spec",
-    "start": "node server.js"
+    "start": "node server.js",
+    "precommit": "npm t"
   },
   "author": "",
   "license": "ISC",
