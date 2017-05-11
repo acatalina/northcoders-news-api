@@ -1,88 +1,26 @@
 ## Northcoders News API
 
-### Background
+Northcoders News API is a project built to serve an API for [Northcoders News](https://northcodersnews-drasek.herokuapp.com)
 
-We will be building the API which we used in the Northcoders News Sprint during the
-Front End block of the course. Your mongoose models and a Database seed file have been done for you.
+It has been deployed [here](https://northcodersnewsapi.herokuapp.com) where you can find the end points you can interact with.
 
-Look closely at the response you get for each route on http://northcoders-news-api.herokuapp.com/ You will notice that we also send data such as the comment and vote count for each article. You will need to think carefully about how to do this in your API.
+## Getting started
 
-You will need to get all your routes built up first as you can share the functionality between you `GET comments by id` route and the comment count on the articles response for example.
+ If you rather want to dig in, please clone this repository, execute ```npm install``` and, when is done, please make mongoDB available with ```mongod```, seed the datebase with ```node seed/seed.js``` and ```npm start``` or ```npm run dev``` (this command will run with nodemon). Now it should be available in your [localhost:3000](http://localhost:3000).
+ 
+## Running the tests
 
-### Mongoose Documentation
+There are tests available to run on ```npm test``` using Mocha testsuite with Chai (make sure you are running mongo!).
 
-The below are all model methods that you call on your models.
+## Deployment
 
-* [find](http://mongoosejs.com/docs/api.html#model_Model.find)
-* [findOne](http://mongoosejs.com/docs/api.html#model_Model.findOne)
-* [findOneAndUpdate](http://mongoosejs.com/docs/api.html#model_Model.findOneAndUpdate)
-* [findOneAndRemove](http://mongoosejs.com/docs/api.html#model_Model.findOneAndRemove)
-* [findById](http://mongoosejs.com/docs/api.html#model_Model.findById)
-* [findByIdAndUpdate](http://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate)
-* [findByIdAndRemove](http://mongoosejs.com/docs/api.html#model_Model.findByIdAndRemove)
-* [update](http://mongoosejs.com/docs/api.html#model_Model.update)
+To deploy the API, make sure you have deployed first a database and set DB as an environmental variable with the datebase url.
 
-There are also some methods that can be called on the documents that get returned. These are:
+## Built with
 
-* [remove](http://mongoosejs.com/docs/api.html#model_Model-remove)
-* [save](http://mongoosejs.com/docs/api.html#model_Model-save)
-* [count](http://mongoosejs.com/docs/api.html#model_Model.count)
+* Express
+* Mongoose
 
-### Tasks
+## Author
 
-1. Seed your database with the main seed file `$ node seed/seed.js`
-2. Build your express App
-3. Mount an API Router onto your app
-4. Define the routes described below
-5. Define controller functions for each of your routes
-6. Once you have all your routes start to tackle responding with the vote and comment counts on article requests like this http://northcoders-news-api.herokuapp.com/api/articles
-7. Test your api routes!
-
-### Routes
-```
-GET /api/topics
-```
-Get all the topics
-
-```
-GET /api/topics/:topic_id/articles
-```
-Return all the articles for a certain topic
-
-```
-GET /api/articles
-```
-Returns all the articles
-
-```
-GET /api/articles/:article_id/comments
-```
-Get all the comments for a individual article
-
-```
-POST /api/articles/:article_id/comments
-```
-Add a new comment to an article. This route requires a JSON body with a comment key and value pair
-e.g: {"comment": "This is my new comment"}
-
-```
-PUT /api/articles/:article_id
-```
-Increment or Decrement the votes of an article by one. This route requires a vote query of 'up' or 'down'
-e.g: /api/articles/:article_id?vote=up
-
-```
-PUT /api/comments/:comment_id
-```
-Increment or Decrement the votes of a comment by one. This route requires a vote query of 'up' or 'down'
-e.g: /api/comments/:comment_id?vote=down
-
-```
-DELETE /api/comments/:comment_id
-```
-Deletes a comment
-
-```
-GET /api/users/:username
-```
-Returns a JSON object with the profile data for the specified user.
+* Alvaro Catalina - [more info](https://acatalina.github.io/portfolio)
